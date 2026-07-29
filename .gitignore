@@ -1,0 +1,29 @@
+﻿# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+
+# Node.js & Angular
+node_modules/
+.angular/
+dist/
+tmp/
+out-tsc/
+*.tsbuildinfo
+
+# Docker & Local Data
+.env
+*.log
+pgdata/
+
+# IDE & OS Specific
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
