@@ -4,16 +4,20 @@ services:
     container_name: arkopticon_db
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-arkopticon}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - arkopticon_net
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: arkopticon_api
     restart: always
     ports:
@@ -24,6 +28,30 @@ services:
       - ./backend:/app
     depends_on:
       - db
+    networks:
+      - arkopticon_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: arkopticon_web
+    restart: always
+    ports:
+      - "4200:4200"
+    environment:
+      - API_URL=http://backend:8000
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - arkopticon_net
 
 volumes:
   postgres_data:
+
+networks:
+  arkopticon_net:
+    driver: bridge
