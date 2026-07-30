@@ -5,7 +5,7 @@ from sqlalchemy.orm import DeclarativeBase
 # Preluăm URL-ul din variabilele de mediu sau fallback local
 DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql+asyncpg://ark_admin:ark_secret_pass@db:5432/arkopticon_db"
+    "postgresql+asyncpg://ark_admin:ark_secret_pass@localhost:5432/arkopticon_db"
 )
 
 # Engine asincron pentru PostgreSQL

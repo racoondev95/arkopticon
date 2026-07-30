@@ -1,30 +1,24 @@
-from sqlalchemy import Column, Integer, String, Text, JSON, ForeignKey, DateTime, func
+from datetime import datetime
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
-from pgvector.sqlalchemy import Vector
+from sqlalchemy.sql import func
+
+# Asigură-te că `Base` provine din fișierul tău de configurare a DB (ex: database.py)
 from database import Base
 
-class Item(Base):
+
+class WikiItemModel(Base):
     __tablename__ = "items"
 
-    id = Column(Integer, primary_order=True, primary_key=True, index=True)
-    name = Column(String(255), nullable=False, index=True)
-    category = Column(String(100), nullable=False, index=True)
-    description = Column(Text, nullable=True)
-    spawn_command = Column(String(500), nullable=True)
-    crafting_recipe = Column(JSON, nullable=True)  # ex: {"Wood": 10, "Stone": 5}
-    image_url = Column(String(500), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-
-    # Relație 1-la-1 cu tabelul de vectori
-    embedding = relationship("ItemEmbedding", back_populates="item", uselist=False, cascade="all, delete-orphan")
-
-
-class ItemEmbedding(Base):
-    __tablename__ = "item_embeddings"
-
     id = Column(Integer, primary_key=True, index=True)
-    item_id = Column(Integer, ForeignKey("items.id", ondelete="CASCADE"), unique=True, nullable=False)
-    # Vector de dimensiune 1536 (standard OpenAI text-embedding-3-small)
-    vector = Column(Vector(1536), nullable=False)
+    name = Column(String, index=True)
+    category = Column(String, index=True)
+    wiki_url = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    spawn_command = Column(String, nullable=True)
+    spawn_command_short = Column(String, nullable=True)
+    spawn_command_long = Column(String, nullable=True)
+    gfi = Column(String, nullable=True)
+    blueprint = Column(String, nullable=True)
 
-    item = relationship("Item", back_populates="embedding")
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
